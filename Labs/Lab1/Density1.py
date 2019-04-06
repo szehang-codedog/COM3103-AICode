@@ -1,4 +1,3 @@
-#This is test for Push
 hk_popu = 7390000
 hk_area = 1108
 
