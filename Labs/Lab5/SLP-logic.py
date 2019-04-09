@@ -13,7 +13,7 @@ import matplotlib.pyplot as pl
 
 
 input = [[0, 0], [0, 1], [1, 0], [1, 1]]
-#target = [[0],   [0],   [0],     [1]] ##AND
+target = [[0],   [0],   [0],     [1]] ##AND
 #target = [[0],   [1],   [1],     [1]] ##OR
 #target = [[0],   [1],   [1],     [0]] ##XOR
 
