@@ -177,51 +177,99 @@ def score(board):
     score=0
     # Check score of each column 
     for c in range(COLUMN_COUNT):
-        col = board[:,c]
-        pass
-        ## ADD YOUR CODE HERE
-        
+        col = board[:, c]
+        player_1 = check_line(col, 1)
+        player_2 = check_line(col, 2)
+        #score += player_1
+        #score -= player_2
+        score += (player_1 - player_2)
     # Check score of each row
     for r in range(ROW_COUNT):
         row = board[r,:]
-        pass
-        ## ADD YOUR CODE HERE
-        
+        player_1 = check_line(row, 1)
+        player_2 = check_line(row, 2)
+        #score += player_1
+        #score -= player_2
+        score += (player_1 - player_2)
     # Check diagonols scores  [\\]
     for d in range(-4,4):
         diag = board.diagonal(d)
-        pass
-        ## ADD YOUR CODE HERE
-                   
+        player_1 = check_line(diag, 1)
+        player_2 = check_line(diag, 2)
+        #score += player_1
+        #score -= player_2
+        score += (player_1 - player_2)
         
     # Check opposite diagonals scores [//]
     for d in range(-4,4):
         diag = np.flip(board,1).diagonal(d)
-        pass
-        ## ADD YOUR CODE HERE
-                
+        player_1 = check_line(diag, 1)
+        player_2 = check_line(diag, 2)
+        #score += player_1
+        #score -= player_2
+        score += (player_1 - player_2)
     return score
     
        
 def list_moves(board, turn):
     children=[]
-    for col in range(0,COLUMN_COUNT):
+    for col in range(0, COLUMN_COUNT):
         if is_valid_location(board, col):
                 children.append(col)
-    return children    
+    return children
 
 
-def max_value(board, level):
-    pass
-    ## ADD YOUR CODE HERE
+def max_value(board, level, prev_best):
+    best_move = -1
+    if level == 0 or no_more_moves(board):
+        return score(board), None
+    if win(board, 1):
+        return 999, None
+    if win(board, 2):
+        return -999, None
+
+    max_score = -9999
+
+    for move in list_moves(board, 1):
+        child_state = np.copy(board)
+        do_move(child_state, move, 1)
+
+        value, dummy = min_value(child_state, level-1, max_score)
+        if value > max_score:
+            max_score = value
+            best_move = move
+        if value > prev_best:
+            break
+    return (max_score, best_move)
             
-def min_value(board, level):
-    pass
-    ## ADD YOUR CODE HERE
+def min_value(board, level, prev_best):
+    best_move = -1
+    if level == 0 or no_more_moves(board):
+        return score(board), None
+    if win(board, 1):
+        return 999, None
+    if win(board, 2):
+        return -999, None
+
+    min_score = 9999
+    for move in list_moves(board, 2):
+        child_state = np.copy(board)
+        do_move(child_state, move, 2)
+
+        value, dummy = max_value(child_state, level - 1, min_score)
+        if value < min_score:
+            min_score = value
+            best_move = move
+        if value < prev_best:
+            break
+    return (min_score, best_move)
 
 def computer_move_minimax(board, turn):
-    pass
-    ## ADD YOUR CODE HERE
+    if(turn==1):
+        value, col = max_value(board, MAX_PLY, 0)
+    else:
+        value, col = min_value(board, MAX_PLY, 0)
+    return col
                         
 def computer_move_random(board, turn):
     done = False
@@ -247,8 +295,8 @@ def play_game():
         if (turn==1 and player1=="human") or (turn==2 and player2=="human"):
             col= player_move(board, turn)
         else:
-            col= computer_move_random(board, turn)
-            #col= computer_move_minimax(board, turn)
+            #col= computer_move_random(board, turn)
+            col= computer_move_minimax(board, turn)
             #CHANGE IT TO  computer_move_minimax(board, turn) WHEN YOU ARE READY
 
         do_move(board, col, turn)
@@ -273,10 +321,10 @@ def play_game():
 #  Main
 ########################
 
-player1="computer"
-#player1="human"
-player2="human"
-#player2="computer"
+#player1="computer"
+player1="human"
+#player2="human"
+player2="computer"
 
 SHOW_TEXT_BOARD=False
 
